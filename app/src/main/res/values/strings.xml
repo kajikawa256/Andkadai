@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ToDoApplication</string>
+    <string name="register">登録</string>
+    <string name="button1">ToDo登録</string>
+    <string name="title">やること(ToDo)</string>
+    <string name="font">新規ToDo登録</string>
+    <string name="titile">タイトルを入力してください</string>
+    <string name="mean">内容を入力してください</string>
+    <string name="back">戻る</string>
+    <string name="Deteil">ToDo詳細</string>
+    <string name="sample">sample</string>
+</resources>
