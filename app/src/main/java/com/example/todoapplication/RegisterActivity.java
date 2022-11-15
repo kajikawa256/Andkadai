@@ -12,8 +12,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -33,25 +35,26 @@ public class RegisterActivity extends AppCompatActivity {
 
         // プレファレンスの宣言
         SharedPreferences pref;
-        ArrayList<String> titleList;
-        ArrayList<String> memoList;
-
-        // プリファレンスから値を取得し、リストを初期化する
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> sArray = pref.getStringSet("ToDoTitle",null);
-        Set<String> s2Array = pref.getStringSet("ToDoMemo",null);
-        if(sArray != null && s2Array != null){
-            titleList = new ArrayList<>(sArray);
-            memoList = new ArrayList<>(s2Array);
+
+        // リスト宣言
+        List<String> todoList;
+
+        // プリファレンスから値を取得、ArrayListに変換
+        String download = pref.getString("todoList","");
+
+        if(!(download.equals(""))){
+            todoList = new ArrayList<String>(Arrays.asList(download.split(",")));
         }else{
-            titleList = new ArrayList<>();
-            memoList = new ArrayList<>();
+            todoList = new ArrayList<String>();
         }
 
         // 戻るボタンクリック時の処理
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+               Intent intent = new Intent(RegisterActivity.this,ListActivity.class);
+               startActivity(intent);
                finish();
             }
         });
@@ -65,21 +68,15 @@ public class RegisterActivity extends AppCompatActivity {
                 }else if(contentfont.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(),"内容を入力してください",Toast.LENGTH_SHORT).show();
                 }else{
-                    // タイトルと内容取得、追加
-                    titleList.add(titlefont.getText().toString());
-                    memoList.add(contentfont.getText().toString());
-                    // キャストしてプリファレンスへ登録
-                    Set<String> cArray = new LinkedHashSet<String>(titleList);
-                    Set<String> dArray = new LinkedHashSet<String>(memoList);
+                    // ArrayListをコンマで区切ってString型に格納、プレファレンスへ登録;
+                    String title = titlefont.getText().toString().replace(",","、");
+                    String content = contentfont.getText().toString().replace(",","、");
+                    todoList.add(title);
+                    todoList.add(content);
+                    todoList.add("URI");
+                    String upload = String.join(",",todoList);
+                    pref.edit().putString("todoList",upload).apply();
 
-                    // デバッグ用
-                    System.out.println("-----------------");
-                    System.out.println(cArray);
-                    System.out.println(dArray);
-                    System.out.println("-----------------");
-
-                    pref.edit().putStringSet("ToDoTitle",cArray).apply();
-                    pref.edit().putStringSet("ToDoMemo",dArray).apply();
                     // リストアクティビティを起動
                     Intent intent = new Intent(RegisterActivity.this,ListActivity.class);
                     startActivity(intent);

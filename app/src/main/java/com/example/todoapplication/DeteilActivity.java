@@ -13,8 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DeteilActivity extends AppCompatActivity {
@@ -37,24 +39,23 @@ public class DeteilActivity extends AppCompatActivity {
 
         // プレファレンスの宣言
         SharedPreferences pref;
-        ArrayList<String> titleList;
-        ArrayList<String> memoList;
-
-        // プリファレンスから値を取得し、リストを初期化する
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> sArray = pref.getStringSet("ToDoTitle",null);
-        Set<String> s2Array = pref.getStringSet("ToDoMemo",null);
-        if(sArray != null && s2Array != null){
-            titleList = new ArrayList<>(sArray);
-            memoList = new ArrayList<>(s2Array);
-        }else{
-            titleList = new ArrayList<>();
-            memoList = new ArrayList<>();
-        }
+
+        // リスト宣言
+        List<String> todoList;
+
+        // プリファレンスから値を取得、ArrayListに変換
+        String download = pref.getString("todoList","");
+        todoList = new ArrayList<String>(Arrays.asList(download.split(",")));
 
         // ListViewで選択したタイトルの詳細表示
-        title.setText(titleList.get(index));
-        content.setText(memoList.get(index));
+        if(index == 0){
+            title.setText(todoList.get(0));
+            content.setText(todoList.get(1));
+        }else{
+            title.setText(todoList.get(index * 3 + 1));
+            content.setText(todoList.get(index * 3 + 2));
+        }
 
         // 戻るボタンクリック時の処理
         backbtn.setOnClickListener(new View.OnClickListener(){
@@ -70,14 +71,20 @@ public class DeteilActivity extends AppCompatActivity {
         finishbtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                // ToDoの削除
-                titleList.remove(index);
-                memoList.remove(index);
+                // title,memo,画像の削除
+                int start;
+                if(index == 0){
+                    start = index;
+                }else{
+                    start = index * 3;
+                }
+                for(int i = 0;i < 3;i++){
+                    todoList.remove(start);
+                }
+
                 // 削除したArrayListをプリファレンスへ登録
-                Set<String> cArray = new LinkedHashSet<String>(titleList);
-                Set<String> dArray = new LinkedHashSet<String>(memoList);
-                pref.edit().putStringSet("ToDoTitle",cArray).apply();
-                pref.edit().putStringSet("ToDoMemo",dArray).apply();
+                String upload = String.join(",",todoList);
+                pref.edit().putString("todoList",upload).apply();
                 // ListActivityへ遷移
                 Intent intent = new Intent(DeteilActivity.this,ListActivity.class);
                 startActivity(intent);

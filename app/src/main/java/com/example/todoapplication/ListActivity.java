@@ -15,7 +15,9 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ListActivity extends AppCompatActivity {
@@ -32,27 +34,29 @@ public class ListActivity extends AppCompatActivity {
 
         // プレファレンスの宣言
         SharedPreferences pref;
-        ArrayList<String> titleList;
-        ArrayList<String> memoList;
-
-        // リストを読み込む
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> sArray = pref.getStringSet("ToDoTitle",null);
-        Set<String> s2Array = pref.getStringSet("ToDoMemo",null);
-        if(sArray!=null){
-            titleList = new ArrayList<>(sArray);
-            memoList = new ArrayList<>(s2Array);
+
+        // プリファレンスから値を取得、ArrayListに変換
+        String download = pref.getString("todoList","");
+        List<String> todoList = new ArrayList<String>(Arrays.asList(download.split(",")));
+
+        if(!(download.equals(""))){
+            String[] title = new String[todoList.size() / 3];
+            for(int i =0;i < title.length;i++){
+                title[i] = todoList.get(i * 3);
+            }
             ArrayAdapter<String> arrayAdapter =
-                    new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titleList);
+                    new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, title);
             listView.setAdapter(arrayAdapter);
         }else{
             // プリファレンスが空の場合
-            titleList = new ArrayList<>();
-            memoList = new ArrayList<>();
+            todoList = new ArrayList<>();
         }
+
         // デバッグ用
-        System.out.println(titleList);
-        System.out.println(memoList);
+        System.out.println("-----------------");
+        System.out.println(todoList);
+        System.out.println("-----------------");
 
         // Todo登録ボタンを押したときの処理
         regibutton.setOnClickListener(new View.OnClickListener(){
@@ -71,7 +75,6 @@ public class ListActivity extends AppCompatActivity {
                 Intent intent = new Intent(ListActivity.this,DeteilActivity.class);
                 intent.putExtra("index",i);
                 startActivity(intent);
-                finish();
             }
         });
     }
