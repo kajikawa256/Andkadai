@@ -13,7 +13,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -50,8 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(RegisterActivity.this,ListActivity.class);
-                startActivity(intent);
+               finish();
             }
         });
 
@@ -63,19 +64,26 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"タイトルを入力してください",Toast.LENGTH_SHORT).show();
                 }else if(contentfont.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(),"内容を入力してください",Toast.LENGTH_SHORT).show();
-
                 }else{
                     // タイトルと内容取得、追加
                     titleList.add(titlefont.getText().toString());
                     memoList.add(contentfont.getText().toString());
                     // キャストしてプリファレンスへ登録
-                    HashSet<String> cArray = new HashSet<String>(titleList);
-                    HashSet<String> dArray = new HashSet<String>(memoList);
+                    Set<String> cArray = new LinkedHashSet<String>(titleList);
+                    Set<String> dArray = new LinkedHashSet<String>(memoList);
+
+                    // デバッグ用
+                    System.out.println("-----------------");
+                    System.out.println(cArray);
+                    System.out.println(dArray);
+                    System.out.println("-----------------");
+
                     pref.edit().putStringSet("ToDoTitle",cArray).apply();
                     pref.edit().putStringSet("ToDoMemo",dArray).apply();
                     // リストアクティビティを起動
                     Intent intent = new Intent(RegisterActivity.this,ListActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });
