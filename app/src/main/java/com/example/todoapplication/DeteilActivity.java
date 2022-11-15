@@ -1,9 +1,11 @@
 package com.example.todoapplication;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -31,7 +33,8 @@ public class DeteilActivity extends AppCompatActivity {
         TextView content = findViewById(R.id.textView4);
         Button finishbtn = findViewById(R.id.button4);
         Button backbtn = findViewById(R.id.button5);
-        ImageView imageView = findViewById(R.id.imageView2);
+        ImageView cameraImage = findViewById(R.id.imageView2);
+
 
         // プレファレンスのindex番号をListViewから受け取る
         Intent intent = getIntent();
@@ -41,8 +44,9 @@ public class DeteilActivity extends AppCompatActivity {
         SharedPreferences pref;
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        // リスト宣言
+        // 変数宣言
         List<String> todoList;
+        Uri imageUri;
 
         // プリファレンスから値を取得、ArrayListに変換
         String download = pref.getString("todoList","");
@@ -52,10 +56,13 @@ public class DeteilActivity extends AppCompatActivity {
         if(index == 0){
             title.setText(todoList.get(0));
             content.setText(todoList.get(1));
+            imageUri = Uri.parse(todoList.get(2));
         }else{
-            title.setText(todoList.get(index * 3 + 1));
-            content.setText(todoList.get(index * 3 + 2));
+            title.setText(todoList.get(index * 3));
+            content.setText(todoList.get(index * 3 + 1));
+            imageUri = Uri.parse(todoList.get(index * 3 + 2));
         }
+        cameraImage.setImageURI(imageUri);
 
         // 戻るボタンクリック時の処理
         backbtn.setOnClickListener(new View.OnClickListener(){
